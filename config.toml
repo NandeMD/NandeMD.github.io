@@ -7,6 +7,11 @@ compile_sass = true
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
 
+author = "NandeMD"
+minify_html = true
+
+description = "My personal blog."
+
 theme = "after-dark"
 
 taxonomies = [
@@ -18,9 +23,10 @@ taxonomies = [
 highlight_code = true
 
 [extra]
-author = "John Smith"
+author = "NandeMD"
 after_dark_menu = [
     {url = "$BASE_URL", name = "Home"},
     {url = "$BASE_URL/categories", name = "Categories"},
     {url = "$BASE_URL/tags", name = "Tags"},
 ]
+after_dark_title = "NandeMD"
