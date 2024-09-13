@@ -1,0 +1,127 @@
+<!doctype html><html lang=en><head><meta content="IE=edge" http-equiv=X-UA-Compatible><meta content="text/html; charset=utf-8" http-equiv=content-type><meta content="width=device-width,initial-scale=1.0" name=viewport><meta content="Found an interesting bug while trying to write a game in Macroquad." name=description><title></title><link href=https://NandeMD.github.io/site.css rel=stylesheet><body class="hack dark main container"><header><nav itemscope itemtype=http://schema.org/SiteNavigationElement><a href=https://NandeMD.github.io itemprop=url> <span itemprop=name>Home</span></a><a href=https://NandeMD.github.io/categories itemprop=url> <span itemprop=name>Categories</span></a><a href=https://NandeMD.github.io/tags itemprop=url> <span itemprop=name>Tags</span></a></nav></header><article itemscope itemtype=http://schema.org/BlogPosting><header><h1 itemprop=headline>Weird Fullscreen Resolution Bug In Macroquad on Ubuntu</h1><span class=muted> <svg class="icon i-clock" viewbox="0 0 32 32" fill=none height=16 stroke=currentcolor stroke-linecap=round stroke-linejoin=round stroke-width=6.25% width=16><circle cx=16 cy=16 r=14 /><path d="M16 8 L16 16 20 20"/></svg> <span>6 minute read</span> <svg class="icon i-edit" viewbox="0 0 32 32" fill=none height=16 stroke=currentcolor stroke-linecap=round stroke-linejoin=round stroke-width=6.25% width=16><path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/></svg> Published: 2024-09-13 </span></header><div itemprop=articleBody><p>Because this is the first post in my blog, you probably will see some mistakes about grammar, styling, etc. I wanted to say sorry in advance.<h1 id=why-macroquad>Why Macroquad?</h1><p>As a hobbyist programmer when I get bored, I try to find myself a few project ideas that will entertain me and free me from my daily grim life. So this time, I asked myself "You like playing games, why don't you try making one?" and decided to use Rust. The game will be a basic, 2D spaceship/alien shooting game.<p>I started to search for simple frameworks for Rust game development in <a href=https://arewegameyet.rs/ecosystem/engines/#crates>AreWeGameYet</a> and found some options.<ul><li><a href=https://github.com/bevyengine/bevy>Bevy</a>: I think this is a full fledged engine but I don't have a use for it's most features. Also what I want to make is a simple game so ECS is an extra burden.<li><a href=https://github.com/ggez/ggez>ggez</a>: Nice features, simpler than Bevy but still has too complicated and too many features I won't use.<li><a href=https://github.com/FyroxEngine/Fyrox>Fyrox</a>: Same problems with Bevy.<li><a href=https://github.com/hecrj/coffee>coffe</a>: I actually liked it but the last commit was 4 years ago.<li><a href=https://github.com/not-fl3/macroquad>Macroquad</a>: Really simple to draw things to a screen, no complicated macros, doesn't have much bloated dependencies so it's easy to build on my old but trusty laptop.</ul><p>So I chose macroquad and got to work on my game.<h1 id=trying-to-position-the-player>Trying to position the player</h1><p>I want my player to be a spaceship, located on the bottom side of the screen, to have some margin and size relative to screen resolution (this is the part ehehe), and can move only left and right. Also I want a full-screen-only game. So let's get into code.<p>As I said, drawing things is really easy with macroquad so my <code>main</code> function is really neat.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span>#[</span><span style=color:#bf616a>macroquad</span><span>::</span><span style=color:#bf616a>main</span><span>(window_conf)]
+</span><span>async </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>main</span><span>() {
+</span><span>    </span><span style=color:#96b5b4>log_info</span><span>();
+</span><span>
+</span><span>    </span><span style=color:#b48ead>let mut</span><span> p = player::Player::new();
+</span><span>
+</span><span>    </span><span style=color:#b48ead>loop </span><span>{
+</span><span>        </span><span style=color:#96b5b4>clear_background</span><span>(</span><span style=color:#d08770>BLACK</span><span>);
+</span><span>
+</span><span>        p.</span><span style=color:#96b5b4>update</span><span>();
+</span><span>        p.</span><span style=color:#96b5b4>draw</span><span>();
+</span><span>
+</span><span>        </span><span style=color:#96b5b4>next_frame</span><span>().await
+</span><span>    }
+</span><span>}
+</span></code></pre><p>Let's create a function to print some information about the system/game on the console:<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>log_info</span><span>() {
+</span><span>    info!("</span><span style=color:#a3be8c>Resolution: {}x{}</span><span>", </span><span style=color:#96b5b4>screen_width</span><span>(), </span><span style=color:#96b5b4>screen_height</span><span>());
+</span><span>}
+</span></code></pre><p>We also need to define the game window configuration with <code>Conf</code> struct for the game to start with fullscreen.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>window_conf</span><span>() -> Conf {
+</span><span>    Conf {
+</span><span>        window_title: "</span><span style=color:#a3be8c>Shootin'</span><span>".</span><span style=color:#96b5b4>into</span><span>(),
+</span><span>        fullscreen: </span><span style=color:#d08770>true</span><span>,
+</span><span>        ..Default::default()
+</span><span>    }
+</span><span>}
+</span></code></pre><p>I also defined an <code>Entity</code> trait, a <code>Player</code> struct, and in the <code>new()</code> function, i set the player's position to the bottom middle of the screen. I'm only showing the necessary part for the code.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>const </span><span style=color:#d08770>PLAYER_BASE_SIZE</span><span>: </span><span style=color:#b48ead>f32 </span><span>= </span><span style=color:#d08770>20.0</span><span>; </span><span style=color:#65737e>// Base size of the player on a 1080p screen
+</span><span style=color:#b48ead>const </span><span style=color:#d08770>BASE_SCREEN_PIXEL_COUNT</span><span>: </span><span style=color:#b48ead>f32 </span><span>= </span><span style=color:#d08770>1920.0 </span><span>* </span><span style=color:#d08770>1080.0</span><span>;
+</span><span style=color:#b48ead>const </span><span style=color:#d08770>PLAYER_BOTTOM_MARGIN</span><span>: </span><span style=color:#b48ead>f32 </span><span>= </span><span style=color:#d08770>10.0</span><span>; </span><span style=color:#65737e>// Percentage of the screen height
+</span><span>
+</span><span style=color:#b48ead>impl </span><span>Entity </span><span style=color:#b48ead>for </span><span>Player {
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>new</span><span>() -> </span><span style=color:#b48ead>Self </span><span>{
+</span><span>        </span><span style=color:#b48ead>let</span><span> screen_pixel_count = </span><span style=color:#96b5b4>screen_width</span><span>() * </span><span style=color:#96b5b4>screen_height</span><span>();
+</span><span>        </span><span style=color:#b48ead>let</span><span> scaling_factor = screen_pixel_count / </span><span style=color:#d08770>BASE_SCREEN_PIXEL_COUNT</span><span>;
+</span><span>
+</span><span>        </span><span style=color:#b48ead>let</span><span> player_size = </span><span style=color:#d08770>PLAYER_BASE_SIZE </span><span>* scaling_factor;
+</span><span>
+</span><span>        </span><span style=color:#b48ead>let</span><span> size = RectEntitySize {
+</span><span>            w: player_size,
+</span><span>            h: player_size,
+</span><span>        };
+</span><span>
+</span><span>        </span><span style=color:#b48ead>let</span><span> pos = Position {
+</span><span>            x: </span><span style=color:#96b5b4>screen_width</span><span>() / </span><span style=color:#d08770>2.0</span><span>,
+</span><span>            y: </span><span style=color:#96b5b4>screen_height</span><span>() * (</span><span style=color:#d08770>100.0 </span><span>- </span><span style=color:#d08770>PLAYER_BOTTOM_MARGIN</span><span>) / </span><span style=color:#d08770>100.0 </span><span>- size.h,
+</span><span>        };
+</span><span>
+</span><span>        Player {
+</span><span>            pos: pos,
+</span><span>            speed: </span><span style=color:#d08770>5</span><span>,
+</span><span>            entity_type: EntityType::Player,
+</span><span>            size: size,
+</span><span>        }
+</span><span>    }
+</span><span>    ...
+</span><span>}
+</span></code></pre><p>Let's hit <code>cargo run</code> and see what it does and voila! My player square is smaller than intended, player's position also leans to the left and top side of the screen! But why, the code should work! Let's try turning off the fullscreen, shall we? Ta-da, it works as I intended! Macroquad spawns an 800x600 window and the player is on where it should be. Wait, 800x600? When I switch back to fullscreen, on the command line, I see this output: <code>Resolution: 800x600</code>!<p>I don't get it. My laptop's monitor's resolution is 1920x1080 so when I set <code>fullscreen: true</code>, <code>log_info()</code> should report my resolution as <code>1920x1080</code>. Then I noticed something. When I start my game in fullscreen, game window is spawning as a small window on the left bottom corner on my screen as a small window, then stretches to fullscreen! I think <code>log_info()</code> function is reporting my screen resolution before the stretching happens and <code>Player</code> also initializes before it! I can add a delay in <code>main()</code> with <code>std::thread::sleep(...)</code> but this is probably not a good idea because first, I don't know when the screen will be stretched, and second, I don't want my game to start with a delay so I need to find another solution.<h1 id=solutions>Solutions</h1><p>Firstly, I need you to know I encountered this bug only in my laptop that uses Ubuntu 22.04.5 with default Gnome 42.9 DE. I can't reproduce it on my Windows machine. Sadly, I don't own any Macs so this one is not checked. Ah, and I have Ryzen 5 3500u's integrated Radeon Vega 8 with default drivers.<p>When I was searching macroquad's docs for a way to solve this problem I encountered <a href=https://docs.rs/macroquad/latest/macroquad/prelude/struct.Conf.html>Conf</a>, the window configuration struct.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>pub struct </span><span>Conf {
+</span><span>    </span><span style=color:#b48ead>pub </span><span style=color:#bf616a>window_title</span><span>: String,
+</span><span>    </span><span style=color:#b48ead>pub </span><span style=color:#bf616a>window_width</span><span>: </span><span style=color:#b48ead>i32</span><span>,  </span><span style=color:#65737e>// Default: 800
+</span><span>    </span><span style=color:#b48ead>pub </span><span style=color:#bf616a>window_height</span><span>: </span><span style=color:#b48ead>i32</span><span>, </span><span style=color:#65737e>// Default: 600
+</span><span>    ...
+</span><span>
+</span><span>    # You see the width and heigh defaults? 
+</span><span>}
+</span></code></pre><p>So before creating a <code>Conf</code>, somehow I should determine my monitor's resolution and set the width and height. Easy right? Let's google how to do it. :)<h2 id=solution-1-use-miniquad-headaches>Solution 1: Use miniquad (headaches)</h2><p>I was looking into macroquad's source code to understand how macroquad handles windowing and fullscreen and I stumbled upon something. Macroquad uses a library called <code>miniquad</code> by the same author and windowing system is tied to miniquad! Also, macroquad exposes miniquad so i tried to look into <code>miniquad::window</code> and saw <code>miniquad::window::screen_size()</code>! But that doesn't work either :) Let's look into that function's code then.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>pub fn </span><span style=color:#8fa1b3>screen_size</span><span>() -> (</span><span style=color:#b48ead>f32</span><span>, </span><span style=color:#b48ead>f32</span><span>) {
+</span><span>        </span><span style=color:#b48ead>let</span><span> d = </span><span style=color:#96b5b4>native_display</span><span>().</span><span style=color:#96b5b4>lock</span><span>().</span><span style=color:#96b5b4>unwrap</span><span>();
+</span><span>        (d.screen_width as </span><span style=color:#b48ead>f32</span><span>, d.screen_height as </span><span style=color:#b48ead>f32</span><span>)
+</span><span>    }
+</span></code></pre><p>Hmm, native display huh? What is it?<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>static </span><span style=color:#d08770>NATIVE_DISPLAY</span><span>: OnceLock&LTMutex&LTnative::NativeDisplayData>> = OnceLock::new();
+</span><span>
+</span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>set_display</span><span>(</span><span style=color:#bf616a>display</span><span>: native::NativeDisplayData) {
+</span><span>    </span><span style=color:#d08770>NATIVE_DISPLAY
+</span><span>        .</span><span style=color:#96b5b4>set</span><span>(Mutex::new(display))
+</span><span>        .</span><span style=color:#96b5b4>unwrap_or_else</span><span>(|_| panic!("</span><span style=color:#a3be8c>NATIVE_DISPLAY already set</span><span>"));
+</span><span>}
+</span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>native_display</span><span>() -> &</span><span style=color:#b48ead>'static </span><span>Mutex&LTnative::NativeDisplayData> {
+</span><span>    </span><span style=color:#d08770>NATIVE_DISPLAY
+</span><span>        .</span><span style=color:#96b5b4>get</span><span>()
+</span><span>        .</span><span style=color:#96b5b4>expect</span><span>("</span><span style=color:#a3be8c>Backend has not initialized NATIVE_DISPLAY yet.</span><span>") </span><span style=color:#65737e>//|| Mutex::new(Default::default()))
+</span><span>}
+</span></code></pre><p>Ah, nice! Now I need to find the usages of <code>set_display(...)</code> :) Lucky me, for Linux, it is seperated in 2 files. <code>src/native/linux_x11.rs</code> and <code>src/native/linux_wayland.rs</code>. Hmm... I don't know anything about Linux windowing system internals so maybe it is a X11 thing since I use X11? Ok, I don't understand anything. Let's try a simple example with just miniquad.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span style=color:#b48ead>use </span><span>miniquad::*;
+</span><span>
+</span><span style=color:#b48ead>struct </span><span>Stage {
+</span><span>    </span><span style=color:#bf616a>ctx</span><span>: GlContext,
+</span><span>}
+</span><span style=color:#b48ead>impl </span><span>EventHandler </span><span style=color:#b48ead>for </span><span>Stage {
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>update</span><span>(&</span><span style=color:#b48ead>mut </span><span style=color:#bf616a>self</span><span>) {
+</span><span>        println!("</span><span style=color:#a3be8c>Screen size: </span><span style=color:#d08770>{:?}</span><span>", window::screen_size());
+</span><span>    }
+</span><span>
+</span><span>    </span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>draw</span><span>(&</span><span style=color:#b48ead>mut </span><span style=color:#bf616a>self</span><span>) {
+</span><span>        </span><span style=color:#bf616a>self</span><span>.ctx.</span><span style=color:#96b5b4>clear</span><span>(Some((</span><span style=color:#d08770>0.</span><span>, </span><span style=color:#d08770>1.</span><span>, </span><span style=color:#d08770>0.</span><span>, </span><span style=color:#d08770>1.</span><span>)), None, None);
+</span><span>    }
+</span><span>}
+</span><span>
+</span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>main</span><span>() {
+</span><span>    miniquad::start(
+</span><span>        conf::Conf {
+</span><span>            window_title: "</span><span style=color:#a3be8c>Miniquad</span><span>".</span><span style=color:#96b5b4>to_string</span><span>(),
+</span><span>            fullscreen: </span><span style=color:#d08770>true</span><span>,
+</span><span>            ..Default::default()
+</span><span>        },
+</span><span>        || {
+</span><span>            Box::new(Stage {
+</span><span>                ctx: GlContext::new(),
+</span><span>            })
+</span><span>        },
+</span><span>    );
+</span><span>}
+</span></code></pre><p><code>println!</code> prints 800x600 for the first frame and 1920x1080 for the rest of the frames...<p>Oh no, please, it's not working and it keeps getting harder and harder! At this point, I couldn't comprehend anything more about this, I don't have time, I don't have patience. I abandoned the idea of using miniquad. Extra dependencies, hurray!<h2 id=solution-2-use-winit>Solution 2: Use <a href=https://github.com/rust-windowing/winit>winit</a></h2><p>For a different toy project of mine, I needed to use winit so I knew I could get a proper monitor resolution with it. I added winit to Linux dependencies.<pre class=language-toml data-lang=toml style=color:#c0c5ce;background-color:#2b303b><code class=language-toml data-lang=toml><span>[target.'</span><span style=color:#a3be8c>cfg(target_os = "linux")</span><span>'.dependencies]
+</span><span style=color:#bf616a>winit </span><span>= "</span><span style=color:#a3be8c>0.30.5</span><span>"
+</span></code></pre><p>Then I created another <code>window_conf()</code> that compiles only in Linux and marked the original one with <code>#[cfg(not(target_os = "linux"))]</code>.<p><strong>Note:</strong> Creating a window without a running event loop is deprecated in winit but since I don't want to create a window, it should be fine.<pre class=language-rust data-lang=rust style=color:#c0c5ce;background-color:#2b303b><code class=language-rust data-lang=rust><span>#[</span><span style=color:#bf616a>cfg</span><span>(target_os = "</span><span style=color:#a3be8c>linux</span><span>")]
+</span><span>#[</span><span style=color:#bf616a>allow</span><span>(deprecated)]
+</span><span style=color:#b48ead>fn </span><span style=color:#8fa1b3>window_conf</span><span>() -> Conf {
+</span><span>    </span><span style=color:#b48ead>let</span><span> el = EventLoop::new().</span><span style=color:#96b5b4>unwrap</span><span>();
+</span><span>    </span><span style=color:#b48ead>let</span><span> window = el.</span><span style=color:#96b5b4>create_window</span><span>(Window::default_attributes()).</span><span style=color:#96b5b4>unwrap</span><span>();
+</span><span>    </span><span style=color:#b48ead>let</span><span> screen = window.</span><span style=color:#96b5b4>current_monitor</span><span>().</span><span style=color:#96b5b4>unwrap</span><span>();
+</span><span>    </span><span style=color:#b48ead>let</span><span> size = screen.</span><span style=color:#96b5b4>size</span><span>();
+</span><span>
+</span><span>    Conf {
+</span><span>        window_title: "</span><span style=color:#a3be8c>Shootin'</span><span>".</span><span style=color:#96b5b4>into</span><span>(),
+</span><span>        fullscreen: </span><span style=color:#d08770>true</span><span>,
+</span><span>        window_width: size.width as </span><span style=color:#b48ead>i32</span><span>,
+</span><span>        window_height: size.height as </span><span style=color:#b48ead>i32</span><span>,
+</span><span>        ..Default::default()
+</span><span>    }
+</span><span>}
+</span></code></pre><p>Aaaaand, it works, finally! But this method is introducing a huge dependency to Linux builds (resulting --release binary is 1.1 MB, so actually not a huge deal).<h1 id=conclusion>Conclusion</h1><p>I mean, I'm not a professional developer, just a hobbyist. And I have a tendency to overcomplicate things. Debug build times with winit are not so bad, release binary size is good. Don't be a dumbo like me. Also maybe there was a solution if I understood how miniquad creates windows under X11. Is this a bug with miniquad? I don't know. Is this a bug with X11? Probably not. :) Have a nice day.</div><footer><hr><p>Published by NandeMD in <a href=https://NandeMD.github.io/categories/bug/>bug</a> and tagged <a href=https://NandeMD.github.io/tags/rust/>rust</a> and <a href=https://NandeMD.github.io/tags/games/>games</a></footer></article>

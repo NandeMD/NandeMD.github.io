@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://NandeMD.github.io/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/001-fullscreen-bug/</loc>
+        <lastmod>2024-09-13</lastmod>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/categories/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/categories/bug/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/categories/games/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/categories/windowing/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/tags/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/tags/games/</loc>
+    </url>
+    <url>
+        <loc>https://NandeMD.github.io/tags/rust/</loc>
+    </url>
+</urlset>
