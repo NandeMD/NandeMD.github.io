@@ -4,7 +4,7 @@ date = "2025-01-29"
 description = "Let's write a fair GUI app in Rust."
 
 [taxonomies]
-categories = ["gui", "rust", "iced"]
+categories = ["gui", "rust", "iced", "lescan"]
 tags = ["rust", "gui"]
 +++
 
