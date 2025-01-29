@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - iced</title>
+    <subtitle>My personal blog.</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://NandeMD.github.io/categories/iced/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://NandeMD.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-01-29T00:00:00+00:00</updated>
+    <id>https://NandeMD.github.io/categories/iced/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Rust GUI Adventures - Part 1</title>
+        <published>2025-01-29T00:00:00+00:00</published>
+        <updated>2025-01-29T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              NandeMD
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://NandeMD.github.io/002-rust-gui-adventures/"/>
+        <id>https://NandeMD.github.io/002-rust-gui-adventures/</id>
+        
+        <content type="html" xml:base="https://NandeMD.github.io/002-rust-gui-adventures/">&lt;p&gt;If you&#x27;re into fansubbing, you&#x27;ve probably heard of tools that make the process easier.
+One of the most notable is &lt;a href=&quot;http:&#x2F;&#x2F;www.aegisub.org&#x2F;&quot;&gt;Aegisub&lt;&#x2F;a&gt;, a powerful application written in C++.
+It’s packed with features that are incredibly useful for fansubbing, and I used it for a long time.
+I was always impressed by its broad capabilities.&lt;&#x2F;p&gt;
+&lt;p&gt;After stepping away from fansubbing, I got into scanlations.
+For a few years, I dabbled in translation work for fun, and honestly,
+the tools available for scanlations are, at best, primitive compared to fansubbing tools.
+Some scanlation groups rely solely on Notepad or Word for translations.
+While typesetters have incredibly powerful commercial tool like Photoshop,
+translators are stuck with Notepad or Word, which makes translation process tedious.
+That got me thinking: &lt;em&gt;Why not create a tool to make the translation process easier?&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I had two language options for building this tool: Python or Rust (since those are the only two I know). I chose Rust because I wanted my app to be performant, and I thought it would be more fun to write it in Rust. (I should also mention that I have little to no experience with GUIs.) I began searching for GUI libraries in Rust and found a few options:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gtk-rs.org&#x2F;gtk4-rs&#x2F;stable&#x2F;latest&#x2F;book&#x2F;&quot;&gt;gtk4&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: This seems like a powerful library with a robust set of widgets. Why didn’t I choose it? I’m not sure—it just didn’t feel right to me.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;linebender&#x2F;xilem&quot;&gt;xilem&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: This one seemed too complicated and experimental for my needs.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;fltk-rs&#x2F;fltk-rs&quot;&gt;fltk-rs&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: For some reason, I didn’t vibe with it. Maybe because it feels too C++-ish, and it reminded me of GTK4.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;iced.rs&#x2F;&quot;&gt;iced&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: I loved its simplicity and declarative UI approach. It’s also incredibly easy to use. The Elm architecture it’s based on seems really elegant. Plus, System76 chose it for their Pop!_OS Cosmic DE, so it must be good, right?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;I ultimately chose &lt;strong&gt;Iced&lt;&#x2F;strong&gt; because of its simplicity and architecture. While it seems to have a limited number of widgets, I think I can work with it. In the next posts, I’ll share my experiences with Iced and the development of my app.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

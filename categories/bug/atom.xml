@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - bug</title>
+    <subtitle>My personal blog.</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://NandeMD.github.io/categories/bug/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://NandeMD.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-09-13T00:00:00+00:00</updated>
+    <id>https://NandeMD.github.io/categories/bug/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Weird Fullscreen Resolution Bug In Macroquad on Ubuntu</title>
+        <published>2024-09-13T00:00:00+00:00</published>
+        <updated>2024-09-13T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              NandeMD
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://NandeMD.github.io/001-fullscreen-bug/"/>
+        <id>https://NandeMD.github.io/001-fullscreen-bug/</id>
+        
+        <content type="html" xml:base="https://NandeMD.github.io/001-fullscreen-bug/">&lt;p&gt;Because this is the first post in my blog, you probably will see some mistakes about grammar, styling, etc. I wanted to say sorry in advance.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;why-macroquad&quot;&gt;Why Macroquad?&lt;&#x2F;h1&gt;
+&lt;p&gt;As a hobbyist programmer when I get bored, I try to find myself a few project ideas that will entertain me and free me from my daily grim life.
+So this time, I asked myself &quot;You like playing games, why don&#x27;t you try making one?&quot; and decided to use Rust. The game will be a basic, 2D spaceship&#x2F;alien shooting game.&lt;&#x2F;p&gt;
+&lt;p&gt;I started to search for simple frameworks for Rust game development in &lt;a href=&quot;https:&#x2F;&#x2F;arewegameyet.rs&#x2F;ecosystem&#x2F;engines&#x2F;#crates&quot;&gt;AreWeGameYet&lt;&#x2F;a&gt; and found some options.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;bevyengine&#x2F;bevy&quot;&gt;Bevy&lt;&#x2F;a&gt;: I think this is a full fledged engine but I don&#x27;t have a use for it&#x27;s most features. Also what I want to make is a simple game so ECS is an extra burden.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ggez&#x2F;ggez&quot;&gt;ggez&lt;&#x2F;a&gt;: Nice features, simpler than Bevy but still has too complicated and too many features I won&#x27;t use.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;FyroxEngine&#x2F;Fyrox&quot;&gt;Fyrox&lt;&#x2F;a&gt;: Same problems with Bevy.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;hecrj&#x2F;coffee&quot;&gt;coffe&lt;&#x2F;a&gt;: I actually liked it but the last commit was 4 years ago.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;not-fl3&#x2F;macroquad&quot;&gt;Macroquad&lt;&#x2F;a&gt;: Really simple to draw things to a screen, no complicated macros, doesn&#x27;t have much bloated dependencies so it&#x27;s easy to build on my old but trusty laptop.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;So I chose macroquad and got to work on my game.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;trying-to-position-the-player&quot;&gt;Trying to position the player&lt;&#x2F;h1&gt;
+&lt;p&gt;I want my player to be a spaceship, located on the bottom side of the screen, to have some margin and size relative to screen resolution (this is the part ehehe), and can move only left and right. Also I want a full-screen-only game. So let&#x27;s get into code.&lt;&#x2F;p&gt;
+&lt;p&gt;As I said, drawing things is really easy with macroquad so my &lt;code&gt;main&lt;&#x2F;code&gt; function is really neat.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;macroquad&lt;&#x2F;span&gt;&lt;span&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span&gt;(window_conf)]
+&lt;&#x2F;span&gt;&lt;span&gt;async &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;log_info&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let mut&lt;&#x2F;span&gt;&lt;span&gt; p = player::Player::new();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;loop &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;clear_background&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;BLACK&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        p.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;update&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;        p.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;draw&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;next_frame&lt;&#x2F;span&gt;&lt;span&gt;().await
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Let&#x27;s create a function to print some information about the system&#x2F;game on the console:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;log_info&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    info!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Resolution: {}x{}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;screen_width&lt;&#x2F;span&gt;&lt;span&gt;(), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;screen_height&lt;&#x2F;span&gt;&lt;span&gt;());
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;We also need to define the game window configuration with &lt;code&gt;Conf&lt;&#x2F;code&gt; struct for the game to start with fullscreen.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;window_conf&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; Conf {
+&lt;&#x2F;span&gt;&lt;span&gt;    Conf {
+&lt;&#x2F;span&gt;&lt;span&gt;        window_title: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Shootin&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;into&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;        fullscreen: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;        ..Default::default()
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I also defined an &lt;code&gt;Entity&lt;&#x2F;code&gt; trait,  a &lt;code&gt;Player&lt;&#x2F;code&gt; struct, and in the &lt;code&gt;new()&lt;&#x2F;code&gt; function, i set the player&#x27;s position to the bottom middle of the screen. I&#x27;m only showing the necessary part for the code.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;const &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;PLAYER_BASE_SIZE&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32 &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;20.0&lt;&#x2F;span&gt;&lt;span&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Base size of the player on a 1080p screen
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;const &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;BASE_SCREEN_PIXEL_COUNT&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32 &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1920.0 &lt;&#x2F;span&gt;&lt;span&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1080.0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;const &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;PLAYER_BOTTOM_MARGIN&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32 &lt;&#x2F;span&gt;&lt;span&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10.0&lt;&#x2F;span&gt;&lt;span&gt;; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Percentage of the screen height
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;impl &lt;&#x2F;span&gt;&lt;span&gt;Entity &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;Player {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;new&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;Self &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; screen_pixel_count = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;screen_width&lt;&#x2F;span&gt;&lt;span&gt;() * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;screen_height&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; scaling_factor = screen_pixel_count &#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;BASE_SCREEN_PIXEL_COUNT&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; player_size = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;PLAYER_BASE_SIZE &lt;&#x2F;span&gt;&lt;span&gt;* scaling_factor;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; size = RectEntitySize {
+&lt;&#x2F;span&gt;&lt;span&gt;            w: player_size,
+&lt;&#x2F;span&gt;&lt;span&gt;            h: player_size,
+&lt;&#x2F;span&gt;&lt;span&gt;        };
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; pos = Position {
+&lt;&#x2F;span&gt;&lt;span&gt;            x: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;screen_width&lt;&#x2F;span&gt;&lt;span&gt;() &#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2.0&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;            y: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;screen_height&lt;&#x2F;span&gt;&lt;span&gt;() * (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;100.0 &lt;&#x2F;span&gt;&lt;span&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;PLAYER_BOTTOM_MARGIN&lt;&#x2F;span&gt;&lt;span&gt;) &#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;100.0 &lt;&#x2F;span&gt;&lt;span&gt;- size.h,
+&lt;&#x2F;span&gt;&lt;span&gt;        };
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        Player {
+&lt;&#x2F;span&gt;&lt;span&gt;            pos: pos,
+&lt;&#x2F;span&gt;&lt;span&gt;            speed: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;            entity_type: EntityType::Player,
+&lt;&#x2F;span&gt;&lt;span&gt;            size: size,
+&lt;&#x2F;span&gt;&lt;span&gt;        }
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;    ...
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Let&#x27;s hit &lt;code&gt;cargo run&lt;&#x2F;code&gt; and see what it does and voila! My player square is smaller than intended, player&#x27;s position also leans to the left and top side of the screen! But why, the code should work! Let&#x27;s try turning off the fullscreen, shall we? Ta-da, it works as I intended! Macroquad spawns an 800x600 window and the player is on where it should be. Wait, 800x600? When I switch back to fullscreen, on the command line,  I see this output: &lt;code&gt;Resolution: 800x600&lt;&#x2F;code&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;I don&#x27;t get it. My laptop&#x27;s monitor&#x27;s resolution is 1920x1080 so when I set &lt;code&gt;fullscreen: true&lt;&#x2F;code&gt;, &lt;code&gt;log_info()&lt;&#x2F;code&gt; should report my resolution as &lt;code&gt;1920x1080&lt;&#x2F;code&gt;. Then
+I noticed something. When I start my game in fullscreen, game window is spawning as a small window on the left bottom corner on my screen as a small window, then stretches to fullscreen! I think &lt;code&gt;log_info()&lt;&#x2F;code&gt; function is reporting my screen resolution before the stretching happens and &lt;code&gt;Player&lt;&#x2F;code&gt; also initializes before it! I can add a delay in &lt;code&gt;main()&lt;&#x2F;code&gt; with &lt;code&gt;std::thread::sleep(...)&lt;&#x2F;code&gt; but this is probably not a good idea because first, I don&#x27;t know when the screen will be stretched, and second, I don&#x27;t want my game to start with a delay so I need to find another solution.&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;solutions&quot;&gt;Solutions&lt;&#x2F;h1&gt;
+&lt;p&gt;Firstly, I need you to know I encountered this bug only in my laptop that uses Ubuntu 22.04.5 with default Gnome 42.9 DE. I can&#x27;t reproduce it on my Windows
+machine. Sadly, I don&#x27;t own any Macs so this one is not checked. Ah, and I have Ryzen 5 3500u&#x27;s integrated Radeon Vega 8 with default drivers.&lt;&#x2F;p&gt;
+&lt;p&gt;When I was searching macroquad&#x27;s docs for a way to solve this problem I encountered &lt;a href=&quot;https:&#x2F;&#x2F;docs.rs&#x2F;macroquad&#x2F;latest&#x2F;macroquad&#x2F;prelude&#x2F;struct.Conf.html&quot;&gt;Conf&lt;&#x2F;a&gt;, the window configuration struct.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span&gt;Conf {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;window_title&lt;&#x2F;span&gt;&lt;span&gt;: String,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;window_width&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;i32&lt;&#x2F;span&gt;&lt;span&gt;,  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Default: 800
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;window_height&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;i32&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F; Default: 600
+&lt;&#x2F;span&gt;&lt;span&gt;    ...
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    # You see the width and heigh defaults? 
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;So before creating a &lt;code&gt;Conf&lt;&#x2F;code&gt;, somehow I should determine my monitor&#x27;s resolution and set the width and height. Easy right? Let&#x27;s google how to do it. :)&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;solution-1-use-miniquad-headaches&quot;&gt;Solution 1: Use miniquad (headaches)&lt;&#x2F;h2&gt;
+&lt;p&gt;I was looking into macroquad&#x27;s source code to understand how macroquad handles windowing and fullscreen and I stumbled upon something. Macroquad uses a library called &lt;code&gt;miniquad&lt;&#x2F;code&gt; by the same author and windowing system is tied to miniquad! Also, macroquad exposes miniquad so i tried to look into &lt;code&gt;miniquad::window&lt;&#x2F;code&gt; and saw &lt;code&gt;miniquad::window::screen_size()&lt;&#x2F;code&gt;! But that doesn&#x27;t work either :) Let&#x27;s look into that function&#x27;s code then.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;screen_size&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; (&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; d = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;native_display&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;lock&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;        (d.screen_width as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32&lt;&#x2F;span&gt;&lt;span&gt;, d.screen_height as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f32&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Hmm, native display huh? What is it?&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;static &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;NATIVE_DISPLAY&lt;&#x2F;span&gt;&lt;span&gt;: OnceLock&amp;lt;Mutex&amp;lt;native::NativeDisplayData&amp;gt;&amp;gt; = OnceLock::new();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;set_display&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;display&lt;&#x2F;span&gt;&lt;span&gt;: native::NativeDisplayData) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;NATIVE_DISPLAY
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;set&lt;&#x2F;span&gt;&lt;span&gt;(Mutex::new(display))
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap_or_else&lt;&#x2F;span&gt;&lt;span&gt;(|_| panic!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;NATIVE_DISPLAY already set&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;));
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;native_display&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; &amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;&amp;#39;static &lt;&#x2F;span&gt;&lt;span&gt;Mutex&amp;lt;native::NativeDisplayData&amp;gt; {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;NATIVE_DISPLAY
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;get&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        .&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;expect&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Backend has not initialized NATIVE_DISPLAY yet.&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F;|| Mutex::new(Default::default()))
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Ah, nice! Now I need to find the usages of &lt;code&gt;set_display(...)&lt;&#x2F;code&gt; :) Lucky me, for Linux, it is seperated in 2 files. &lt;code&gt;src&#x2F;native&#x2F;linux_x11.rs&lt;&#x2F;code&gt; and
+&lt;code&gt;src&#x2F;native&#x2F;linux_wayland.rs&lt;&#x2F;code&gt;. Hmm... I don&#x27;t know anything about Linux windowing system internals so maybe it is a X11 thing since I use X11? Ok, I don&#x27;t understand anything. Let&#x27;s try a simple example with just miniquad.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;use &lt;&#x2F;span&gt;&lt;span&gt;miniquad::*;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;struct &lt;&#x2F;span&gt;&lt;span&gt;Stage {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ctx&lt;&#x2F;span&gt;&lt;span&gt;: GlContext,
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;impl &lt;&#x2F;span&gt;&lt;span&gt;EventHandler &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;Stage {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;update&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;        println!(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Screen size: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;{:?}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, window::screen_size());
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;draw&lt;&#x2F;span&gt;&lt;span&gt;(&amp;amp;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;mut &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.ctx.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;clear&lt;&#x2F;span&gt;&lt;span&gt;(Some((&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0.&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1.&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0.&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1.&lt;&#x2F;span&gt;&lt;span&gt;)), None, None);
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;main&lt;&#x2F;span&gt;&lt;span&gt;() {
+&lt;&#x2F;span&gt;&lt;span&gt;    miniquad::start(
+&lt;&#x2F;span&gt;&lt;span&gt;        conf::Conf {
+&lt;&#x2F;span&gt;&lt;span&gt;            window_title: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Miniquad&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;to_string&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            fullscreen: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;            ..Default::default()
+&lt;&#x2F;span&gt;&lt;span&gt;        },
+&lt;&#x2F;span&gt;&lt;span&gt;        || {
+&lt;&#x2F;span&gt;&lt;span&gt;            Box::new(Stage {
+&lt;&#x2F;span&gt;&lt;span&gt;                ctx: GlContext::new(),
+&lt;&#x2F;span&gt;&lt;span&gt;            })
+&lt;&#x2F;span&gt;&lt;span&gt;        },
+&lt;&#x2F;span&gt;&lt;span&gt;    );
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;code&gt;println!&lt;&#x2F;code&gt; prints 800x600 for the first frame and 1920x1080 for the rest of the frames...&lt;&#x2F;p&gt;
+&lt;p&gt;Oh no, please, it&#x27;s not working and it keeps getting harder and harder! At this point, I couldn&#x27;t comprehend anything more about this, I don&#x27;t have time, I don&#x27;t have patience. I abandoned the idea of using miniquad. Extra dependencies, hurray!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;solution-2-use-winit&quot;&gt;Solution 2: Use &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rust-windowing&#x2F;winit&quot;&gt;winit&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;For a different toy project of mine, I needed to use winit so I knew I could get a proper monitor resolution with it. I added winit to Linux dependencies.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;toml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-toml &quot;&gt;&lt;code class=&quot;language-toml&quot; data-lang=&quot;toml&quot;&gt;&lt;span&gt;[target.&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;cfg(target_os = &amp;quot;linux&amp;quot;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;.dependencies]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;winit &lt;&#x2F;span&gt;&lt;span&gt;= &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;0.30.5&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Then I created another &lt;code&gt;window_conf()&lt;&#x2F;code&gt; that compiles only in Linux and marked the original one with &lt;code&gt;#[cfg(not(target_os = &quot;linux&quot;))]&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;&#x2F;strong&gt; Creating a window without a running event loop is deprecated in winit but since I don&#x27;t want to create a window, it should be fine.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cfg&lt;&#x2F;span&gt;&lt;span&gt;(target_os = &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;linux&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)]
+&lt;&#x2F;span&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;allow&lt;&#x2F;span&gt;&lt;span&gt;(deprecated)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;fn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;window_conf&lt;&#x2F;span&gt;&lt;span&gt;() -&amp;gt; Conf {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; el = EventLoop::new().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; window = el.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;create_window&lt;&#x2F;span&gt;&lt;span&gt;(Window::default_attributes()).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; screen = window.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;current_monitor&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;unwrap&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;let&lt;&#x2F;span&gt;&lt;span&gt; size = screen.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;size&lt;&#x2F;span&gt;&lt;span&gt;();
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    Conf {
+&lt;&#x2F;span&gt;&lt;span&gt;        window_title: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Shootin&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;into&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;        fullscreen: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;        window_width: size.width as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;i32&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;        window_height: size.height as &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;i32&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;        ..Default::default()
+&lt;&#x2F;span&gt;&lt;span&gt;    }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Aaaaand, it works, finally! But this method is introducing a huge dependency to Linux builds (resulting --release binary is 1.1 MB, so actually not a huge deal).&lt;&#x2F;p&gt;
+&lt;h1 id=&quot;conclusion&quot;&gt;Conclusion&lt;&#x2F;h1&gt;
+&lt;p&gt;I mean, I&#x27;m not a professional developer, just a hobbyist. And I have a tendency to overcomplicate things. Debug build times with winit are not so bad, release binary size is good. Don&#x27;t be a dumbo like me. Also maybe there was a solution if I understood how miniquad creates windows under X11. Is this a bug with miniquad? I don&#x27;t know. Is this a bug with X11? Probably not. :) Have a nice day.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

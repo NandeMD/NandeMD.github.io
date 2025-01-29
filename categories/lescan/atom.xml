@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - lescan</title>
+    <subtitle>My personal blog.</subtitle>
+    <link rel="self" type="application/atom+xml" href="https://NandeMD.github.io/categories/lescan/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://NandeMD.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-01-29T00:00:00+00:00</updated>
+    <id>https://NandeMD.github.io/categories/lescan/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Rust GUI Adventures - Part 1</title>
+        <published>2025-01-29T00:00:00+00:00</published>
+        <updated>2025-01-29T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              NandeMD
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://NandeMD.github.io/002-rust-gui-adventures/"/>
+        <id>https://NandeMD.github.io/002-rust-gui-adventures/</id>
+        
+        <content type="html" xml:base="https://NandeMD.github.io/002-rust-gui-adventures/">&lt;p&gt;If you&#x27;re into fansubbing, you&#x27;ve probably heard of tools that make the process easier.
+One of the most notable is &lt;a href=&quot;http:&#x2F;&#x2F;www.aegisub.org&#x2F;&quot;&gt;Aegisub&lt;&#x2F;a&gt;, a powerful application written in C++.
+It’s packed with features that are incredibly useful for fansubbing, and I used it for a long time.
+I was always impressed by its broad capabilities.&lt;&#x2F;p&gt;
+&lt;p&gt;After stepping away from fansubbing, I got into scanlations.
+For a few years, I dabbled in translation work for fun, and honestly,
+the tools available for scanlations are, at best, primitive compared to fansubbing tools.
+Some scanlation groups rely solely on Notepad or Word for translations.
+While typesetters have incredibly powerful commercial tool like Photoshop,
+translators are stuck with Notepad or Word, which makes translation process tedious.
+That got me thinking: &lt;em&gt;Why not create a tool to make the translation process easier?&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I had two language options for building this tool: Python or Rust (since those are the only two I know). I chose Rust because I wanted my app to be performant, and I thought it would be more fun to write it in Rust. (I should also mention that I have little to no experience with GUIs.) I began searching for GUI libraries in Rust and found a few options:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gtk-rs.org&#x2F;gtk4-rs&#x2F;stable&#x2F;latest&#x2F;book&#x2F;&quot;&gt;gtk4&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: This seems like a powerful library with a robust set of widgets. Why didn’t I choose it? I’m not sure—it just didn’t feel right to me.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;linebender&#x2F;xilem&quot;&gt;xilem&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: This one seemed too complicated and experimental for my needs.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;fltk-rs&#x2F;fltk-rs&quot;&gt;fltk-rs&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: For some reason, I didn’t vibe with it. Maybe because it feels too C++-ish, and it reminded me of GTK4.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https:&#x2F;&#x2F;iced.rs&#x2F;&quot;&gt;iced&lt;&#x2F;a&gt;&lt;&#x2F;strong&gt;: I loved its simplicity and declarative UI approach. It’s also incredibly easy to use. The Elm architecture it’s based on seems really elegant. Plus, System76 chose it for their Pop!_OS Cosmic DE, so it must be good, right?&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;I ultimately chose &lt;strong&gt;Iced&lt;&#x2F;strong&gt; because of its simplicity and architecture. While it seems to have a limited number of widgets, I think I can work with it. In the next posts, I’ll share my experiences with Iced and the development of my app.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Rust GUI Adventures - Part 2 - Backend (?)</title>
+        <published>2025-01-29T00:00:00+00:00</published>
+        <updated>2025-01-29T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              NandeMD
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://NandeMD.github.io/003-rust-gui-adventures-02/"/>
+        <id>https://NandeMD.github.io/003-rust-gui-adventures-02/</id>
+        
+        <content type="html" xml:base="https://NandeMD.github.io/003-rust-gui-adventures-02/">&lt;style&gt;
+.img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; &#x2F;* Space between images *&#x2F;
+}
+&lt;&#x2F;style&gt;
+&lt;p&gt;So to write a GUI app like Aegisub, first I need to decide how to handle the data about translations in two contexts:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;In the memory&lt;&#x2F;li&gt;
+&lt;li&gt;In the save file&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h2 id=&quot;so-what-kind-of-data-do-i-need-to-store&quot;&gt;So what kind of data do I need to store?&lt;&#x2F;h2&gt;
+&lt;p&gt;To understand our data, let&#x27;s get a look at some Manga or Webtoon translations.&lt;&#x2F;p&gt;
+&lt;div class=&quot;img-container&quot;&gt;
+    &lt;img src=&quot;https:&#x2F;&#x2F;i.pinimg.com&#x2F;564x&#x2F;08&#x2F;31&#x2F;c5&#x2F;0831c5ee69dfe42102665dfc61227fe3.jpg&quot; alt=&quot;Balloon Types&quot; width=&quot;300&quot;&#x2F;&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;&lt;em&gt;Credits: https:&#x2F;&#x2F;lezlynorman.com&#x2F;drawing-comics-speech-balloons&#x2F;&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;For nearly all type of comics, we store texts (speeches, thoughts, etc.) in balloons, though there is a lot of exceptions.
+For the sake of simplicity, I will refer all non-balloon texts as &quot;balloons&quot; and they will be sub-types of balloons.&lt;&#x2F;p&gt;
+&lt;p&gt;There is a lot of types of balloons, but for now we can generalize them as:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Dialogue&lt;&#x2F;strong&gt;: Balloons that contains speeches or monologues between characters. Usually they are in a circular shape.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Square&lt;&#x2F;strong&gt;: Balloons that shaped as squares. They usually contains thoughts or some kind of information outside of speech.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Thinking&lt;&#x2F;strong&gt;: Balloons that contains thoughts of characters. They are usually shaped as clouds but there are a lot of variations.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;ST&lt;&#x2F;strong&gt;: Short for &lt;strong&gt;S&lt;&#x2F;strong&gt;ound &lt;strong&gt;T&lt;&#x2F;strong&gt;ext. They are usually used for sound effects. They are usually shaped as rectangles.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;OT&lt;&#x2F;strong&gt;: Short for &lt;strong&gt;O&lt;&#x2F;strong&gt;ver &lt;strong&gt;T&lt;&#x2F;strong&gt;ext. These are the texts that does not belong to any balloon.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;We can store types with Enums in Rust:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;derive&lt;&#x2F;span&gt;&lt;span&gt;(PartialEq, Debug, Clone)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub enum &lt;&#x2F;span&gt;&lt;span&gt;TYPES {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;DIALOGUE&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;SQUARE&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;THINKING&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;ST&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;OT
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Then we need to store the texts in the balloons. A balloon can have multiple texts.
+Also a single balloon can be sometimes appear as two balloons connected to each other like the photos below:&lt;&#x2F;p&gt;
+&lt;div class=&quot;img-container&quot;&gt;
+    &lt;img src=&quot;https:&#x2F;&#x2F;celclipaskprod.s3-ap-northeast-1.amazonaws.com&#x2F;question&#x2F;47b4&#x2F;88353&#x2F;1&#x2F;295ea22d20ee733a6a1972ba32e5385c_small&quot; alt=&quot;Connected Balloons&quot; width=&quot;200&quot;&#x2F;&gt;
+    &lt;img src=&quot;https:&#x2F;&#x2F;encrypted-tbn0.gstatic.com&#x2F;images?q=tbn:ANd9GcT__Cj9pmQq_Ku8W-mVIg60zj8XdcYK17tWUQ&amp;s&quot;&#x2F;&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;This means this connected balloons can have multiple texts. So we need to store them as a single entity.&lt;&#x2F;p&gt;
+&lt;p&gt;Also a lot of times, after a translator translates a chapter, the translations will be sent to a proofreader to check for errors.
+So we need to store the proofreaders&#x27; review as well.&lt;&#x2F;p&gt;
+&lt;p&gt;Then we came to comments. Sometimes, translators or proofreaders (or whoever works with the file) may want to add some comments to the translations.
+So we need to store them as well.&lt;&#x2F;p&gt;
+&lt;p&gt;Now the somewhat tricky part, &lt;em&gt;sometimes&lt;&#x2F;em&gt; translators or proofreaders may want to add context to the translation by attaching different types of images to it.
+In memory representation, we can store the image bytes, but in the save file, we need to store the image itself.&lt;&#x2F;p&gt;
+&lt;p&gt;So lets create a struct for Balloon:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;derive&lt;&#x2F;span&gt;&lt;span&gt;(Default, Debug, Clone)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span&gt;Balloon {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tl_content&lt;&#x2F;span&gt;&lt;span&gt;: Vec&amp;lt;String&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pr_content&lt;&#x2F;span&gt;&lt;span&gt;: Vec&amp;lt;String&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;comments&lt;&#x2F;span&gt;&lt;span&gt;: Vec&amp;lt;String&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;btype&lt;&#x2F;span&gt;&lt;span&gt;: TYPES,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;balloon_img&lt;&#x2F;span&gt;&lt;span&gt;: Option&amp;lt;BalloonImage&amp;gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;derive&lt;&#x2F;span&gt;&lt;span&gt;(Default, Debug, Clone)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span&gt;BalloonImage {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;img_type&lt;&#x2F;span&gt;&lt;span&gt;: String,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;img_data&lt;&#x2F;span&gt;&lt;span&gt;: Vec&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;u8&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now we need to store these balloons in a Document. A chapter can contain different pages if it&#x27;s a manga, and multiple balloons.
+I also want to have some metadata about the App, Script etc. So our document struct will look like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;rust&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-rust &quot;&gt;&lt;code class=&quot;language-rust&quot; data-lang=&quot;rust&quot;&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;allow&lt;&#x2F;span&gt;&lt;span&gt;(non_snake_case)]
+&lt;&#x2F;span&gt;&lt;span&gt;#[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;derive&lt;&#x2F;span&gt;&lt;span&gt;(Debug)]
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub struct &lt;&#x2F;span&gt;&lt;span&gt;Document {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F;&#x2F; sff (Scanlation File Format) version. No big changes expected.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;METADATA_SCRIPT_VERSION&lt;&#x2F;span&gt;&lt;span&gt;: String,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F;&#x2F; If you use this library for an app, it may come in handy to indicate your app&amp;#39;s version.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;METADATA_APP_VERSION&lt;&#x2F;span&gt;&lt;span&gt;: String,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F;&#x2F; Some other info you want to give&#x2F;specify.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;METADATA_INFO&lt;&#x2F;span&gt;&lt;span&gt;: String,
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;&#x2F;&#x2F;&#x2F; There is your balloons m8.
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;pub &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;balloons&lt;&#x2F;span&gt;&lt;span&gt;: Vec&amp;lt;Balloon&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Ah, in-memory representation is done. Now we need to store this in a file. How do we serialize this data though?&lt;&#x2F;p&gt;
+&lt;p&gt;There are a lot of serialization formats like JSON, XML, YAML, TOML etc. Let&#x27;s look at how Aegisub handles this.&lt;&#x2F;p&gt;
+&lt;p&gt;Aegisub uses a format called ASS (Advanced Substation Alpha). Below is an example:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;ass&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-ass &quot;&gt;&lt;code class=&quot;language-ass&quot; data-lang=&quot;ass&quot;&gt;&lt;span&gt;[Script Info]
+&lt;&#x2F;span&gt;&lt;span&gt;PlayResY: 600
+&lt;&#x2F;span&gt;&lt;span&gt;WrapStyle: 1
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;[V4+ Styles]
+&lt;&#x2F;span&gt;&lt;span&gt;Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+&lt;&#x2F;span&gt;&lt;span&gt;Style: Expl, Arial,28,&amp;amp;H00FFB0B0,&amp;amp;H00B0B0B0,&amp;amp;H00303030,&amp;amp;H80000008,-1,0,0,0,100,100,0.00,0.00,1,1.00,2.00, 7 ,30,10,30,0
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;[Events]
+&lt;&#x2F;span&gt;&lt;span&gt;Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+&lt;&#x2F;span&gt;&lt;span&gt;Dialogue: 0,00:00:00.00,00:03:00.00,Expl, NTP,0,0,0,,{\pos(20,20)}UwU
+&lt;&#x2F;span&gt;&lt;span&gt;Dialogue: 0,00:00:00.00,00:03:00.00,Code, NTP,0,0,0,,{\pos(40,160)}OwO
+&lt;&#x2F;span&gt;&lt;span&gt;Dialogue: 0,00:00:00.00,00:03:00.00,Expl, NTP,0,0,0,,{\pos(20,550)}UwU
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;There is 3 main sections in an ASS file. &lt;code&gt;[Script Info]&lt;&#x2F;code&gt;, &lt;code&gt;[V4+ Styles]&lt;&#x2F;code&gt; and &lt;code&gt;[Events]&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Script Info&lt;&#x2F;strong&gt; stores the info about .ass script, such as the app name, version etc.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;V4+ Styles&lt;&#x2F;strong&gt; section stores the subtitle styles in a CSV-like format.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Events&lt;&#x2F;strong&gt; section stores the actual subtitles, timecodes and some additional per-subtitle info in a CSV-like format.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;I actually don&#x27;t like the ASS format that much because it is hard to read by human eye when you have a lot of styles and subtitles,
+and I think there is a lot of standardised serialization formats out there, fast and used by many so it&#x27;s unnecessary to just use a different format.&lt;&#x2F;p&gt;
+&lt;p&gt;After a little thinking session, I decided to go with XML. Why you ask?&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;XML is pretty extensible. Adding new features to files will be a breeze.&lt;&#x2F;li&gt;
+&lt;li&gt;There is a lot of fast XML parsers in a lot of languages.&lt;&#x2F;li&gt;
+&lt;li&gt;I think it is easier to read for humans than JSON.&lt;&#x2F;li&gt;
+&lt;li&gt;I like XML.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Also I want to have a really human-readable format. This will come in handy when translators ship their works to typesetters etc.
+This format is basically a txt file and will have balloon texts line by line (every text is on a new line),
+different balloons have a blank space between them. Also connected balloons will have &quot;&#x2F;&#x2F;&quot; characters in between them. A simple example is below:&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#2b303b;color:#c0c5ce;&quot;&gt;&lt;code&gt;&lt;span&gt;&#x2F;&#x2F; This will be a normal dialogue
+&lt;&#x2F;span&gt;&lt;span&gt;(): Hi, how are you:
+&lt;&#x2F;span&gt;&lt;span&gt;&#x2F;&#x2F; This will be Over Text
+&lt;&#x2F;span&gt;&lt;span&gt;OT: I can&amp;#39;t say I&amp;#39;m annoyed by him.
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;So, to serialize Document to XML, first, I thought about using Serde crate but i suddenly had an urge to code mine.
+So I did. This format is pretty simple, so it was really easy to implement with Rust&#x27;s &lt;code&gt;format!()&lt;&#x2F;code&gt; macro. For the serialization of the images,
+I encoded them as BASE64 and stored them in the XML file. For the future, I might want to use Serde for this, but for now, this is enough.&lt;&#x2F;p&gt;
+&lt;p&gt;You can see the whole code in the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;NandeMD&#x2F;rsff&quot;&gt;repository&lt;&#x2F;a&gt;. See you.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>
