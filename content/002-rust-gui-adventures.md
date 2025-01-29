@@ -1,6 +1,6 @@
 +++
 title = "Rust GUI Adventures - Part 1"
-date = "TBD"
+date = "2025-01-29"
 description = "Let's write a fair GUI app in Rust."
 
 [taxonomies]
